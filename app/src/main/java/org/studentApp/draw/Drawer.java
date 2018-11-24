@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Drawer extends View {
-    List<Integer> commonList= new ArrayList<>();
     Bitmap car;
     private Canvas canvas;
 
@@ -48,19 +47,53 @@ public class Drawer extends View {
         drawMap();
     }
 
-    private void imageList(){
-        String path = "R.drawable.";
-        for (int i = 1; i <= 20; i++ ){
-            int image = Integer.valueOf(path + "comun" + i);
-            commonList.add(image);
-        }
-    }
-    private void drawMap(){
-        //imageList();
-        car = BitmapFactory.decodeResource(getResources(), R.drawable.amarillo);
-        Bitmap scaledCar= Bitmap.createScaledBitmap(car, 100, 100, false);
-        canvas.drawBitmap(scaledCar, 0, 0, null);
+    private List<Integer> houseList(){
+        List<Integer> commonList= new ArrayList<>();
+        commonList.add(R.drawable.comun1);
+        commonList.add(R.drawable.comun2);
+        commonList.add(R.drawable.comun3);
+        commonList.add(R.drawable.comun4);
+        commonList.add(R.drawable.comun5);
+        commonList.add(R.drawable.comun6);
+        commonList.add(R.drawable.comun7);
+        commonList.add(R.drawable.comun8);
+        commonList.add(R.drawable.comun9);
+        commonList.add(R.drawable.comun10);
+        commonList.add(R.drawable.comun11);
+        commonList.add(R.drawable.comun12);
+        commonList.add(R.drawable.comun13);
+        commonList.add(R.drawable.comun14);
+        commonList.add(R.drawable.comun15);
+        commonList.add(R.drawable.comun16);
+        commonList.add(R.drawable.comun17);
+        commonList.add(R.drawable.comun18);
+        commonList.add(R.drawable.comun19);
+        commonList.add(R.drawable.comun20);
+
+        return commonList;
     }
 
+    private List<Integer> buildingList(){
+        List<Integer> buildingsList= new ArrayList<>();
+        buildingsList.add(R.drawable.edificio1);
+        buildingsList.add(R.drawable.edificio2);
+        buildingsList.add(R.drawable.edificio3);
+        buildingsList.add(R.drawable.edificio4);
+        buildingsList.add(R.drawable.edificio5);
+        buildingsList.add(R.drawable.edificio6);
+        buildingsList.add(R.drawable.edificio7);
+        buildingsList.add(R.drawable.edificio8);
+        buildingsList.add(R.drawable.edificio9);
+        buildingsList.add(R.drawable.edificio10);
+
+        return buildingsList;
+    }
+    private void drawMap(){
+        List<Integer> list = houseList();
+        car = BitmapFactory.decodeResource(getResources(), list.get(0));
+        Bitmap scaledCar= Bitmap.createScaledBitmap(car, 80, 80, false);
+        canvas.drawBitmap(scaledCar, 0, 0, null);
+
+    }
 
 }
