@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">StudentApp</string>
-    <string name="studentappicon">StudentAppIcon</string>
+    <string name="student_app_icon">StudentAppIcon</string>
     <string name="password">Password</string>
 </resources>

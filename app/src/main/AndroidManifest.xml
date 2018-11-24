@@ -13,8 +13,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:exported="true"></activity>
-        <activity android:name=".AppActivity"></activity>
+            android:exported="true" />
+        <activity android:name=".MapActivity"></activity>
     </application>
 
 </manifest>
