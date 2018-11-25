@@ -1,44 +1,109 @@
 package com.example.ramir.studentapp;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.util.SparseArray;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.widget.TextView;
 
-import me.dm7.barcodescanner.zbar.Result;
-import me.dm7.barcodescanner.zbar.ZBarScannerView;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-public class ScannerActivity extends AppCompatActivity implements ZBarScannerView.ResultHandler {
-    private ZBarScannerView mScannerView;
+import java.io.IOException;
 
-    @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        mScannerView = new ZBarScannerView(this);    // Programmatically initialize the scanner view
-        setContentView(mScannerView);                // Set the scanner view as the content view
-    }
+public class ScannerActivity extends AppCompatActivity{
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();          // Start camera on resume
-    }
+    SurfaceView surfaceView;
+    CameraSource cameraSource;
+    TextView textView;
+    BarcodeDetector barcodeDetector;
+
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mScannerView.stopCamera();           // Stop camera on pause
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_scanner);
+
+        surfaceView = findViewById(R.id.camerapreview);
+        textView = findViewById(R.id.textView);
+
+        barcodeDetector = new BarcodeDetector.Builder(this)
+                .setBarcodeFormats(Barcode.ALL_FORMATS).build();
+
+        cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                .setRequestedPreviewSize(640, 480).build();
+
+        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                    return;
+                }
+
+                try {
+                    cameraSource.start(surfaceHolder);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+                cameraSource.stop();
+
+            }
+        });
+
+        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+            @Override
+            public void release() {
+
+            }
+
+            @Override
+            public void receiveDetections(Detector.Detections<Barcode> detections) {
+                SparseArray<Barcode> qrCodes = detections.getDetectedItems();
+
+                if(qrCodes.size() != 0){
+                    textView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Vibrator vibrator = (Vibrator)getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibrator.vibrate(3000);
+                            textView.setText(qrCodes.valueAt(0).displayValue);
+                        }
+                    });
+                }
+            }
+        });
+
+        focus();
     }
-
-    @Override
-    public void handleResult(Result rawResult) {
-        // Do something with the result here
-        Log.i("RESULT", rawResult.getContents()); // Prints scan results
-        Log.i("RESULT", rawResult.getBarcodeFormat().getName()); // Prints the scan format (qrcode, pdf417 etc.)
-
-        // If you would like to resume scanning, call this method below:
-        mScannerView.resumeCameraPreview(this);
-
+    Camera cam;
+    void focus() {
+        cam = Camera.open();
+        Camera.Parameters params = cam.getParameters();
+        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        cam.setParameters(params);
+        cam.startPreview();
+        cam.autoFocus(new Camera.AutoFocusCallback() {
+            public void onAutoFocus(boolean success, Camera camera) {
+            }
+        });
     }
-
 }

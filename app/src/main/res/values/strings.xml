@@ -2,4 +2,5 @@
     <string name="app_name">StudentApp</string>
     <string name="student_app_icon">StudentAppIcon</string>
     <string name="password">Password</string>
+    <string name="c_digo_de_barras_de_su_carnet_estudiantil">Código de barras de su carnet estudiantil</string>
 </resources>
