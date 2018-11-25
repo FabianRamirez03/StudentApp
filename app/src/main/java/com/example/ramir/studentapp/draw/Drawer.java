@@ -164,8 +164,8 @@ public class Drawer extends View {
         int x = canvas.getWidth() / 2;
         int y = canvas.getHeight() / 2;
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.edificio1);
-        bitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
-        Sprite TEC = new Sprite(x, y, 200, 200, vertices.get(0));
+        bitmap = Bitmap.createScaledBitmap(bitmap, 250, 200, false);
+        Sprite TEC = new Sprite(x, y, 250, 200, vertices.get(0));
         TEC.setBitmap(bitmap);
 
         setSpritePoss(TEC);
