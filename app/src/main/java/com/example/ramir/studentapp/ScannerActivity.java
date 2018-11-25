@@ -3,7 +3,6 @@ package com.example.ramir.studentapp;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
@@ -92,18 +91,6 @@ public class ScannerActivity extends AppCompatActivity{
             }
         });
 
-        focus();
-    }
-    Camera cam;
-    void focus() {
-        cam = Camera.open();
-        Camera.Parameters params = cam.getParameters();
-        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-        cam.setParameters(params);
-        cam.startPreview();
-        cam.autoFocus(new Camera.AutoFocusCallback() {
-            public void onAutoFocus(boolean success, Camera camera) {
-            }
-        });
+
     }
 }

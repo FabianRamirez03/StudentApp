@@ -27,6 +27,7 @@ public class Drawer extends View {
 
     private Canvas canvas;
     private Paint paint = new Paint();
+    private Paint textPaint = new Paint();
     private List<Node<String>> nodes = new ArrayList<>();
     private List<Sprite> drawings = new ArrayList<>();
     private List<DoubleArray<Sprite, Sprite>> roads = new ArrayList<>();
@@ -63,6 +64,8 @@ public class Drawer extends View {
     private void init(@Nullable AttributeSet set) {
         paint.setStrokeWidth(20);
         paint.setColor(Color.CYAN);
+        textPaint.setTextSize(70);
+        textPaint.setColor(Color.BLACK);
     }
 
     @Override
@@ -76,6 +79,8 @@ public class Drawer extends View {
             Sprite sprite1 = array.getFirst();
             Sprite sprite2 = array.getSecond();
             canvas.drawLine(sprite1.getX(), sprite1.getY(), sprite2.getX(), sprite2.getY(), paint);
+            String text = Integer.toString(sprite1.getNode().getAdjacent().get(sprite2.getNode()));
+            canvas.drawText(text,(sprite1.getX() + sprite2.getX())/2, (sprite1.getY() + sprite2.getY())/2, textPaint);
         }
 
         // Draws the buildings
