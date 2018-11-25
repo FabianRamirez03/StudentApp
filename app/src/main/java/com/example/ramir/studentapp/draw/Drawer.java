@@ -27,7 +27,7 @@ import java.util.List;
 public class Drawer extends View {
 
     private Canvas canvas;
-    private static MapActivity activity;
+    private MapActivity activity;
     private Graph graph = MapGenerator.generateGraph(30);
 
     private Paint roadPaint = new Paint();

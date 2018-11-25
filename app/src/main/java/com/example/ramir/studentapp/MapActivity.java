@@ -16,14 +16,13 @@ public class MapActivity extends AppCompatActivity {
     private Drawer drawer;
     private TextView locationText;
     private Button bFindRide;
-    private int textMode = 0;
     public DoubleArray<Sprite, Sprite> locationsSelected = new DoubleArray<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        drawer = new Drawer(this);
+        drawer = findViewById(R.id.drawer);
         drawer.setActivity(this);
 
         locationText = findViewById(R.id.locationText);
@@ -31,27 +30,23 @@ public class MapActivity extends AppCompatActivity {
     }
 
     public void selectLocation(Sprite sprite) {
-        if (locationsSelected.getFirst() != null && !locationsSelected.getFirst().equals(sprite) && textMode == 1){
-            selectDestiny(sprite);
-            textMode = 2;
-        } else if (textMode == 0) {
+        locationText.setText(R.string.please_select_your_location);
+        if (locationsSelected.size() == 0) {
             locationText.setText(R.string.please_select_your_destiny);
             locationsSelected.setFirst(sprite);
-            textMode = 1;
-        } else if (textMode == 1){
-            locationText.setText(R.string.please_select_your_location);
-            locationsSelected.setFirst(null);
-            textMode = 0;
-        } else {
+        } else if (locationsSelected.size() == 1 && !locationsSelected.getFirst().equals(sprite)) {
+            locationsSelected.setSecond(sprite);
+            selectDestiny(sprite);
+        } else if (locationsSelected.size() == 2) {
+            if (locationsSelected.getFirst().equals(sprite)) locationsSelected.setFirst(null);
+            if (locationsSelected.getSecond().equals(sprite)) locationsSelected.setSecond(null);
             locationText.setText(R.string.please_select_your_destiny);
-            textMode = 1;
         }
     }
 
     @SuppressLint("SetTextI18n")
     public void selectDestiny(Sprite sprite) {
         bFindRide.setVisibility(View.VISIBLE);
-        locationsSelected.setSecond(sprite);
         String first = locationsSelected.getFirst().getNode().getElement();
         String second = locationsSelected.getSecond().getNode().getElement();
         locationText.setText("From: " + first + " To: " + second);
