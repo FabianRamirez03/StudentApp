@@ -1,4 +1,4 @@
-package util;
+package com.example.ramir.studentapp.util;
 
 public class DoubleArray<T, U> {
 

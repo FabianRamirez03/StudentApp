@@ -3,7 +3,7 @@ package com.example.ramir.studentapp;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import org.studentApp.draw.Drawer;
+import com.example.ramir.studentapp.draw.Drawer;
 
 public class MapActivity extends AppCompatActivity {
 

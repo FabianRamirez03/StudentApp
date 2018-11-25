@@ -1,10 +1,10 @@
-package ws.map;
+package com.example.ramir.studentapp.map;
+
+import com.example.ramir.studentapp.util.Math;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import util.Math;
 
 public class MapGenerator {
 

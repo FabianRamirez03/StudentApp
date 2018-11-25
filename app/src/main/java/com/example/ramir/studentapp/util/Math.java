@@ -1,4 +1,4 @@
-package util;
+package com.example.ramir.studentapp.util;
 
 import java.util.Random;
 

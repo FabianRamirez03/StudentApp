@@ -1,4 +1,4 @@
-package ws.map;
+package com.example.ramir.studentapp.map;
 
 import java.util.HashMap;
 

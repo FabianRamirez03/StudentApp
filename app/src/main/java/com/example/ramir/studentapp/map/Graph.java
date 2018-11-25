@@ -1,11 +1,11 @@
-package ws.map;
+package com.example.ramir.studentapp.map;
+
+import com.example.ramir.studentapp.util.DoubleArray;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
-import util.DoubleArray;
 
 public class Graph {
 
