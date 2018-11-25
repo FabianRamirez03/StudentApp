@@ -13,6 +13,13 @@ public class DoubleArray<T, U> {
         this.second = second;
     }
 
+    public int size() {
+        int size = 0;
+        if (first != null) size +=1;
+        if (second != null) size +=1;
+        return size;
+    }
+
     public T getFirst() {
         return first;
     }

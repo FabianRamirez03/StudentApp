@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.ramir.studentapp.MapActivity;
 import com.example.ramir.studentapp.R;
 import com.example.ramir.studentapp.map.Graph;
 import com.example.ramir.studentapp.map.MapGenerator;
@@ -26,20 +27,27 @@ import java.util.List;
 public class Drawer extends View {
 
     private Canvas canvas;
+    private static MapActivity activity;
+    private Graph graph = MapGenerator.generateGraph(30);
+
     private Paint roadPaint = new Paint();
     private Paint textPaint = new Paint();
+    private Paint focusPaint = new Paint();
+
     private List<Node<String>> nodes = new ArrayList<>();
     private List<Sprite> buildings = new ArrayList<>();
+    private List<Sprite> circles = new ArrayList<>();
     private List<DoubleArray<Sprite, Sprite>> roads = new ArrayList<>();
     private List<Integer> hList = houseList();
     private List<Integer> bList = buildingList();
-    private Graph graph = MapGenerator.generateGraph(30);
 
+    // Manages the movement of the view
     private int xPoss = 0;
     private int yPoss = 0;
-    private int lastxPoss = 0;
-    private int lastyPoss = 0;
+    private int lastXPoss = 0;
+    private int lastYPoss = 0;
 
+    // Boundaries of the view
     private int minX = 0, maxX = 0;
     private int minY = 0, maxY = 0;
 
@@ -69,12 +77,18 @@ public class Drawer extends View {
         roadPaint.setColor(Color.CYAN);
         textPaint.setTextSize(70);
         textPaint.setColor(Color.BLACK);
+        focusPaint.setColor(Color.GREEN);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         this.canvas = canvas;
         if (buildings.isEmpty()) drawMap();
+
+        // Draws the circles
+        for (Sprite sprite : circles) {
+            canvas.drawCircle(sprite.getX(), sprite.getY(), sprite.getWidth(), focusPaint);
+        }
 
         // Draws the roads
         for (DoubleArray<Sprite, Sprite> array : roads) {
@@ -101,23 +115,34 @@ public class Drawer extends View {
             case MotionEvent.ACTION_DOWN:
                 xPoss = (int) event.getX();
                 yPoss = (int) event.getY();
-                lastxPoss = xPoss;
-                lastyPoss = yPoss;
+                lastXPoss = xPoss;
+                lastYPoss = yPoss;
+                break;
+
+            case MotionEvent.ACTION_UP:
+                xPoss = (int) event.getX();
+                yPoss = (int) event.getY();
+                for (Sprite sprite : buildings) {
+                    if (inSpriteBoundaries(sprite, xPoss, yPoss)) {
+                        spriteClicked(sprite);
+                        break;
+                    }
+                }
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 xPoss = (int) event.getX();
                 yPoss = (int) event.getY();
 
-                if (xPoss != lastxPoss || yPoss != lastyPoss) {
+                if (xPoss != lastXPoss || yPoss != lastYPoss) {
                     for (Sprite sprite : buildings) {
-                        int x = sprite.getX() + (xPoss - lastxPoss);
-                        int y = sprite.getY() + (yPoss - lastyPoss);
+                        int x = sprite.getX() + (xPoss - lastXPoss);
+                        int y = sprite.getY() + (yPoss - lastYPoss);
                         sprite.setX(x);
                         sprite.setY(y);
                     }
-                    lastxPoss = xPoss;
-                    lastyPoss = yPoss;
+                    lastXPoss = xPoss;
+                    lastYPoss = yPoss;
                     this.invalidate();
                 }
                 break;
@@ -262,4 +287,29 @@ public class Drawer extends View {
         return sprite;
     }
 
+    private void spriteClicked(Sprite sprite) {
+
+        boolean focus = !sprite.isFocus();
+        sprite.setFocus(focus);
+        if (focus) circles.add(sprite);
+        else circles.remove(sprite);
+        this.invalidate();
+        activity.selectLocation(sprite);
+    }
+
+    private boolean inSpriteBoundaries(Sprite sprite, int x, int y) {
+        boolean in = false;
+        int hw = sprite.getWidth() / 2;
+        int hh = sprite.getHeight() / 2;
+        int spriteX = sprite.getX();
+        int spriteY = sprite.getY();
+
+        if ((spriteX-hw < x && x < spriteX+hw) && (spriteY-hh < y &&  y < spriteY+hh)) in = true;
+
+        return in;
+    }
+
+    public void setActivity(MapActivity activity) {
+        this.activity = activity;
+    }
 }
