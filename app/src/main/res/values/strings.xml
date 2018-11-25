@@ -2,6 +2,6 @@
     <string name="app_name">StudentApp</string>
     <string name="student_app_icon">StudentAppIcon</string>
     <string name="password">Password</string>
-    <string name="facebook_app_id">add late</string>
-    <string name="facebook_login_protocol_scheme">add late</string>
+    <string name="facebook_app_id">566647190461982</string>
+    <string name="facebook_login_protocol_scheme">fb566647190461982</string>
 </resources>
