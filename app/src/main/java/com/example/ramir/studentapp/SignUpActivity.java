@@ -16,4 +16,8 @@ public class SignUpActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ScannerActivity.class);
         startActivity(intent);
     }
+    public void openFacebookActivity(View view) {
+        Intent intent = new Intent(this, FacebookActivity.class);
+        startActivity(intent);
+    }
 }
