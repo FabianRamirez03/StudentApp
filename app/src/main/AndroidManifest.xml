@@ -3,6 +3,7 @@
     package="com.example.ramir.studentapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -14,7 +15,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
-        <activity android:name=".MapActivity"></activity>
+        <activity android:name=".MapActivity" />
+        <activity android:name=".SignUpActivity" />
+        <activity android:name=".ScannerActivity"></activity>
     </application>
 
 </manifest>
