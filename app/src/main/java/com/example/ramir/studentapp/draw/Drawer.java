@@ -1,9 +1,12 @@
 package com.example.ramir.studentapp.draw;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -13,6 +16,7 @@ import com.example.ramir.studentapp.R;
 import com.example.ramir.studentapp.map.Graph;
 import com.example.ramir.studentapp.map.MapGenerator;
 import com.example.ramir.studentapp.map.Node;
+import com.example.ramir.studentapp.util.DoubleArray;
 import com.example.ramir.studentapp.util.Math;
 
 import java.util.ArrayList;
@@ -22,11 +26,19 @@ import java.util.List;
 public class Drawer extends View {
 
     private Canvas canvas;
+    private Paint paint = new Paint();
     private List<Node<String>> nodes = new ArrayList<>();
-    private List<Sprite> buildings = new ArrayList<>();
+    private List<Sprite> drawings = new ArrayList<>();
+    private List<DoubleArray<Sprite, Sprite>> roads = new ArrayList<>();
     private List<Integer> hList = houseList();
     private List<Integer> bList = buildingList();
-    private Graph graph = MapGenerator.generateGraph(10);
+    private Graph graph = MapGenerator.generateGraph(20);
+
+    private int xPoss = 0;
+    private int yPoss = 0;
+    private int lastxPoss = 0;
+    private int lastyPoss = 0;
+
 
     public Drawer(Context context) {
         super(context);
@@ -49,32 +61,55 @@ public class Drawer extends View {
     }
 
     private void init(@Nullable AttributeSet set) {
-
+        paint.setStrokeWidth(20);
+        paint.setColor(Color.CYAN);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         this.canvas = canvas;
 
-        if (buildings.isEmpty()) drawMap();
-        for (Sprite sprite : buildings) {
-            canvas.drawBitmap(sprite.getBitmap(), sprite.getX() - sprite.getWidth(), sprite.getY() - sprite.getWidth(), null);
+        if (drawings.isEmpty()) drawMap();
+
+        // Draws the roads
+        for (DoubleArray<Sprite, Sprite> array : roads) {
+            Sprite sprite1 = array.getFirst();
+            Sprite sprite2 = array.getSecond();
+            canvas.drawLine(sprite1.getX(), sprite1.getY(), sprite2.getX(), sprite2.getY(), paint);
+        }
+
+        // Draws the buildings
+        for (Sprite sprite : drawings) {
+            canvas.drawBitmap(sprite.getBitmap(), sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2, null);
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-
         switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                xPoss = (int) event.getX();
+                yPoss = (int) event.getY();
+                lastxPoss = xPoss;
+                lastyPoss = yPoss;
+                break;
+
             case MotionEvent.ACTION_MOVE:
-                for (Sprite sprite : buildings) {
-                    sprite.setX(x);
-                    sprite.setY(y);
+                xPoss = (int) event.getX();
+                yPoss = (int) event.getY();
+
+                if (xPoss != lastxPoss || yPoss != lastyPoss) {
+                    for (Sprite sprite : drawings) {
+                        int x = sprite.getX() + (xPoss - lastxPoss);
+                        int y = sprite.getY() + (yPoss - lastyPoss);
+                        sprite.setX(x);
+                        sprite.setY(y);
+                    }
+                    lastxPoss = xPoss;
+                    lastyPoss = yPoss;
+                    this.invalidate();
                 }
-                this.invalidate();
                 break;
         }
         return true;
@@ -129,8 +164,8 @@ public class Drawer extends View {
         int x = canvas.getWidth() / 2;
         int y = canvas.getHeight() / 2;
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.edificio1);
-        bitmap = Bitmap.createScaledBitmap(bitmap, 250, 200, false);
-        Sprite TEC = new Sprite(x, y, 250, 200, vertices.get(0));
+        bitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+        Sprite TEC = new Sprite(x, y, 200, 200, vertices.get(0));
         TEC.setBitmap(bitmap);
 
         setSpritePoss(TEC);
@@ -139,12 +174,13 @@ public class Drawer extends View {
     private void setSpritePoss(Sprite sprite) {
         Node<String> node = sprite.getNode();
         nodes.add(node);
-        buildings.add(sprite);
+        drawings.add(sprite);
         HashMap<Node<String>, Integer> adjacent = node.getAdjacent();
         adjacent.forEach((k, v) -> {
             if (!nodes.contains(k)) {
-                nodes.add(k);
                 Sprite s = wrapToSprite(k);
+                nodes.add(k);
+                drawings.add(s);
 
                 // Set the position of the adjacent nodes
                 int randX = Math.getRandomNumberInRange(-1, 1);
@@ -156,6 +192,7 @@ public class Drawer extends View {
                 s.setY(y);
 
                 // Draws the road from node to node
+                roads.add(new DoubleArray<>(sprite, s));
 
                 // Make recursive connections
                 setSpritePoss(s);

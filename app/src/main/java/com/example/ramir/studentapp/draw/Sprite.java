@@ -17,8 +17,8 @@ public class Sprite {
     }
 
     public Sprite(int x, int y, int width, int height, Node<String> node) {
-        this.x = x;
-        this.y = y;
+        this.x = x - width / 2;
+        this.y = y - height / 2;
         this.width = width;
         this.height = height;
         this.node = node;
