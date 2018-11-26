@@ -6,14 +6,25 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button continueBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        continueBtn = findViewById(R.id.continueBtn);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Scanner2Activity.scanResult != null){
+            continueButton();
+        }
     }
 
     public void openScannerActivity(View view) {
@@ -44,5 +55,15 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FacebookActivity.class);
         startActivity(intent);
         }
+    }
+
+    public void continueButton(){
+        continueBtn.setVisibility(View.VISIBLE);
+    }
+
+
+    public void openMapActivity(View view) {
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
     }
 }

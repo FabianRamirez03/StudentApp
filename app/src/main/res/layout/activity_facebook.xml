@@ -43,16 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" />
 
+
     </LinearLayout>
 
-    <Button
-        android:id="@+id/continueBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="27dp"
-        android:text="Continue"
-        android:visibility="invisible"
-        android:onClick="openMapActivity"/>
 </RelativeLayout>

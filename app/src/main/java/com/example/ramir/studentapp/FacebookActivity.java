@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,7 +36,6 @@ public class FacebookActivity extends AppCompatActivity {
     TextView txtEmail, txtBirthday, txtFriends;
     ProgressDialog mDialog;
     ImageView imgAvatar;
-    Button continueBtn;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -84,7 +81,6 @@ public class FacebookActivity extends AppCompatActivity {
                 request.setParameters(parameters);
                 request.executeAsync();
 
-                continueButton();
             }
 
             @Override
@@ -107,7 +103,7 @@ public class FacebookActivity extends AppCompatActivity {
 
     private void getData(JSONObject object) {
         try {
-            URL profile_picture = new URL("https://graph.facebook.com/" + object.getString("id")+ "/picture?width=250&height=250");
+            URL profile_picture = new URL("https://graph.facebook.com/" + object.getString("id") + "/picture?width=250&height=250");
 
             Picasso.with(this).load(profile_picture.toString()).into(imgAvatar);
 
@@ -137,12 +133,4 @@ public class FacebookActivity extends AppCompatActivity {
         }
     }
 
-    private void continueButton(){
-        continueBtn.setVisibility(View.VISIBLE);
-    }
-
-    public void openMapActivity(View view) {
-        Intent intent = new Intent(this, MapActivity.class);
-        startActivity(intent);
-    }
 }

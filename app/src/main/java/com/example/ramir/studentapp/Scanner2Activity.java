@@ -114,10 +114,10 @@ public class Scanner2Activity extends AppCompatActivity implements ZXingScannerV
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                scannerView.resumeCameraPreview(Scanner2Activity.this);
+
             }
         });
-        builder.setNeutralButton("Visit", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scanResult));
