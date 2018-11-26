@@ -37,10 +37,15 @@ public class MapActivity extends AppCompatActivity {
         } else if (locationsSelected.size() == 1 && !locationsSelected.getFirst().equals(sprite)) {
             locationsSelected.setSecond(sprite);
             selectDestiny(sprite);
+        } else if (locationsSelected.size() == 1 && locationsSelected.getFirst().equals(sprite)) {
+            locationsSelected.setFirst(null);
+        } else if (locationsSelected.size() == 1 && locationsSelected.getSecond().equals(sprite)) {
+            locationsSelected.setSecond(null);
         } else if (locationsSelected.size() == 2) {
             if (locationsSelected.getFirst().equals(sprite)) locationsSelected.setFirst(null);
             if (locationsSelected.getSecond().equals(sprite)) locationsSelected.setSecond(null);
             locationText.setText(R.string.please_select_your_destiny);
+            bFindRide.setVisibility(View.INVISIBLE);
         }
     }
 

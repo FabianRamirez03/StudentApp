@@ -4,6 +4,8 @@ import com.example.ramir.studentapp.map.Graph;
 import com.example.ramir.studentapp.map.MapGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -11,6 +13,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class RestClient {
 
     private static ObjectMapper mapper = new ObjectMapper();
+    private static Graph graph = MapGenerator.generateGraph(30);
 
     private static final String REST_URI = "http://192.168.1.12:9080/CarpoolingServer_war/";
 
@@ -23,16 +26,18 @@ public class RestClient {
 
 
     public Graph getGraph() {
-        Call<Graph> msg = service.getMap();
-        String graph = null;
-        //Log.i("Graph", graph.getVertices().toString());
+        Call<Graph> call = service.getMap().clone();
 
-        /**
+        return graph;
+    }
+
+    public String getUser(int id) {
+        String s = null;
         try {
-            map = mapper.readValue(message, Graph.class);
+            s = service.getUser(id).execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-        }**/
-        return MapGenerator.generateGraph(30);
+        }
+        return s;
     }
 }
