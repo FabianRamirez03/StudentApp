@@ -14,8 +14,8 @@ import android.view.View;
 
 import com.example.ramir.studentapp.MapActivity;
 import com.example.ramir.studentapp.R;
+import com.example.ramir.studentapp.client.RestClient;
 import com.example.ramir.studentapp.map.Graph;
-import com.example.ramir.studentapp.map.MapGenerator;
 import com.example.ramir.studentapp.map.Node;
 import com.example.ramir.studentapp.util.DoubleArray;
 import com.example.ramir.studentapp.util.Math;
@@ -26,9 +26,10 @@ import java.util.List;
 
 public class Drawer extends View {
 
+    private RestClient client = new RestClient();
     private Canvas canvas;
     private MapActivity activity;
-    private Graph graph = MapGenerator.generateGraph(30);
+    private Graph graph = client.getGraph();
 
     private Paint roadPaint = new Paint();
     private Paint textPaint = new Paint();
