@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.ramir.studentapp.MapActivity;
 import com.example.ramir.studentapp.R;
 import com.example.ramir.studentapp.map.Graph;
 import com.example.ramir.studentapp.map.MapGenerator;
@@ -26,18 +27,29 @@ import java.util.List;
 public class Drawer extends View {
 
     private Canvas canvas;
-    private Paint paint = new Paint();
+    private MapActivity activity;
+    private Graph graph = MapGenerator.generateGraph(30);
+
+    private Paint roadPaint = new Paint();
+    private Paint textPaint = new Paint();
+    private Paint focusPaint = new Paint();
+
     private List<Node<String>> nodes = new ArrayList<>();
-    private List<Sprite> drawings = new ArrayList<>();
+    private List<Sprite> buildings = new ArrayList<>();
+    private List<Sprite> circles = new ArrayList<>();
     private List<DoubleArray<Sprite, Sprite>> roads = new ArrayList<>();
     private List<Integer> hList = houseList();
     private List<Integer> bList = buildingList();
-    private Graph graph = MapGenerator.generateGraph(20);
 
+    // Manages the movement of the view
     private int xPoss = 0;
     private int yPoss = 0;
-    private int lastxPoss = 0;
-    private int lastyPoss = 0;
+    private int lastXPoss = 0;
+    private int lastYPoss = 0;
+
+    // Boundaries of the view
+    private int minX = 0, maxX = 0;
+    private int minY = 0, maxY = 0;
 
 
     public Drawer(Context context) {
@@ -61,27 +73,39 @@ public class Drawer extends View {
     }
 
     private void init(@Nullable AttributeSet set) {
-        paint.setStrokeWidth(20);
-        paint.setColor(Color.CYAN);
+        roadPaint.setStrokeWidth(20);
+        roadPaint.setColor(Color.CYAN);
+        textPaint.setTextSize(70);
+        textPaint.setColor(Color.BLACK);
+        focusPaint.setColor(Color.GREEN);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         this.canvas = canvas;
+        if (buildings.isEmpty()) drawMap();
 
-        if (drawings.isEmpty()) drawMap();
+        // Draws the circles
+        for (Sprite sprite : circles) {
+            canvas.drawCircle(sprite.getX(), sprite.getY(), sprite.getWidth(), focusPaint);
+        }
 
         // Draws the roads
         for (DoubleArray<Sprite, Sprite> array : roads) {
             Sprite sprite1 = array.getFirst();
             Sprite sprite2 = array.getSecond();
-            canvas.drawLine(sprite1.getX(), sprite1.getY(), sprite2.getX(), sprite2.getY(), paint);
+            canvas.drawLine(sprite1.getX(), sprite1.getY(), sprite2.getX(), sprite2.getY(), roadPaint);
+
+            // Draw the distances
+            String text = Integer.toString(sprite1.getNode().getAdjacent().get(sprite2.getNode()));
+            canvas.drawText(text, (sprite1.getX() + sprite2.getX()) / 2, (sprite1.getY() + sprite2.getY()) / 2, textPaint);
         }
 
         // Draws the buildings
-        for (Sprite sprite : drawings) {
+        for (Sprite sprite : buildings) {
             canvas.drawBitmap(sprite.getBitmap(), sprite.getX() - sprite.getWidth() / 2, sprite.getY() - sprite.getHeight() / 2, null);
         }
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -91,23 +115,34 @@ public class Drawer extends View {
             case MotionEvent.ACTION_DOWN:
                 xPoss = (int) event.getX();
                 yPoss = (int) event.getY();
-                lastxPoss = xPoss;
-                lastyPoss = yPoss;
+                lastXPoss = xPoss;
+                lastYPoss = yPoss;
+                break;
+
+            case MotionEvent.ACTION_UP:
+                xPoss = (int) event.getX();
+                yPoss = (int) event.getY();
+                for (Sprite sprite : buildings) {
+                    if (inSpriteBoundaries(sprite, xPoss, yPoss)) {
+                        spriteClicked(sprite);
+                        break;
+                    }
+                }
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 xPoss = (int) event.getX();
                 yPoss = (int) event.getY();
 
-                if (xPoss != lastxPoss || yPoss != lastyPoss) {
-                    for (Sprite sprite : drawings) {
-                        int x = sprite.getX() + (xPoss - lastxPoss);
-                        int y = sprite.getY() + (yPoss - lastyPoss);
+                if (xPoss != lastXPoss || yPoss != lastYPoss) {
+                    for (Sprite sprite : buildings) {
+                        int x = sprite.getX() + (xPoss - lastXPoss);
+                        int y = sprite.getY() + (yPoss - lastYPoss);
                         sprite.setX(x);
                         sprite.setY(y);
                     }
-                    lastxPoss = xPoss;
-                    lastyPoss = yPoss;
+                    lastXPoss = xPoss;
+                    lastYPoss = yPoss;
                     this.invalidate();
                 }
                 break;
@@ -164,23 +199,31 @@ public class Drawer extends View {
         int x = canvas.getWidth() / 2;
         int y = canvas.getHeight() / 2;
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.edificio1);
-        bitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
-        Sprite TEC = new Sprite(x, y, 200, 200, vertices.get(0));
+        bitmap = Bitmap.createScaledBitmap(bitmap, 250, 200, false);
+        Sprite TEC = new Sprite(x, y, 250, 200, vertices.get(0));
         TEC.setBitmap(bitmap);
-
         setSpritePoss(TEC);
+
+        for (Node<String> node : vertices) {
+            if (!nodes.contains(node)) {
+                Sprite sprite = wrapToSprite(node);
+                sprite.setX(Math.getRandomNumberInRange(minX, maxX));
+                sprite.setY(Math.getRandomNumberInRange(minY, maxY));
+                setSpritePoss(sprite);
+            }
+        }
     }
 
     private void setSpritePoss(Sprite sprite) {
         Node<String> node = sprite.getNode();
         nodes.add(node);
-        drawings.add(sprite);
+        buildings.add(sprite);
         HashMap<Node<String>, Integer> adjacent = node.getAdjacent();
         adjacent.forEach((k, v) -> {
             if (!nodes.contains(k)) {
                 Sprite s = wrapToSprite(k);
                 nodes.add(k);
-                drawings.add(s);
+                buildings.add(s);
 
                 // Set the position of the adjacent nodes
                 int randX = Math.getRandomNumberInRange(-1, 1);
@@ -190,14 +233,37 @@ public class Drawer extends View {
                 int y = sprite.getY() + v * randY * 400;
                 s.setX(x);
                 s.setY(y);
+                setBoundaries(x, y);
 
                 // Draws the road from node to node
                 roads.add(new DoubleArray<>(sprite, s));
 
                 // Make recursive connections
                 setSpritePoss(s);
+            } else {
+                Sprite s = lookBuilding(k);
+                if (s != null) roads.add(new DoubleArray<>(sprite, s));
             }
         });
+    }
+
+    private Sprite lookBuilding(Node<String> k) {
+        Sprite sprite = null;
+        for (Sprite building: buildings) {
+            if (building.getNode().equals(k)) {
+                sprite = building;
+                break;
+            }
+        }
+
+        return sprite;
+    }
+
+    private void setBoundaries(int x, int y) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
     }
 
     private Sprite wrapToSprite(Node<String> node) {
@@ -221,4 +287,29 @@ public class Drawer extends View {
         return sprite;
     }
 
+    private void spriteClicked(Sprite sprite) {
+
+        boolean focus = !sprite.isFocus();
+        sprite.setFocus(focus);
+        if (focus) circles.add(sprite);
+        else circles.remove(sprite);
+        this.invalidate();
+        activity.selectLocation(sprite);
+    }
+
+    private boolean inSpriteBoundaries(Sprite sprite, int x, int y) {
+        boolean in = false;
+        int hw = sprite.getWidth() / 2;
+        int hh = sprite.getHeight() / 2;
+        int spriteX = sprite.getX();
+        int spriteY = sprite.getY();
+
+        if ((spriteX-hw < x && x < spriteX+hw) && (spriteY-hh < y &&  y < spriteY+hh)) in = true;
+
+        return in;
+    }
+
+    public void setActivity(MapActivity activity) {
+        this.activity = activity;
+    }
 }

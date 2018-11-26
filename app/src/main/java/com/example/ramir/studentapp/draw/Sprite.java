@@ -10,6 +10,7 @@ public class Sprite {
     private int y;
     private int width;
     private int height;
+    private boolean focus = false;
     private Bitmap bitmap;
     private Node<String> node;
 
@@ -54,6 +55,14 @@ public class Sprite {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public boolean isFocus() {
+        return focus;
+    }
+
+    public void setFocus(boolean focus) {
+        this.focus = focus;
     }
 
     public Bitmap getBitmap() {

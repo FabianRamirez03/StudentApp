@@ -61,4 +61,17 @@ public class Math {
         }
         return num;
     }
+
+    public static int middleXPoint(int x1, int x2){
+        int newX;
+        newX = (x1 + x2)/2;
+        return newX;
+    }
+
+    public static int middleYPoint(int y1, int y2){
+        int newY;
+        newY = (y1 + y2)/2;
+        return newY;
+    }
+
 }

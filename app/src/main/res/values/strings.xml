@@ -2,6 +2,10 @@
     <string name="app_name">StudentApp</string>
     <string name="student_app_icon">StudentAppIcon</string>
     <string name="password">Password</string>
+    <string name="c_digo_de_barras_de_su_carnet_estudiantil">Código de barras de su carnet estudiantil</string>
+    <string name="please_select_your_location">Please select your location</string>
+    <string name="please_select_your_destiny">Please select your destiny</string>
+    <string name="find_ride">Find Ride</string>
     <string name="facebook_app_id">566647190461982</string>
     <string name="facebook_login_protocol_scheme">fb566647190461982</string>
 </resources>
