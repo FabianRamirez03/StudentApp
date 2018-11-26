@@ -22,6 +22,7 @@ public class Scanner2Activity extends AppCompatActivity implements ZXingScannerV
 
     private static final int REQUEST_CAMERA = 1;
     private ZXingScannerView scannerView;
+    public static String scanResult = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +108,7 @@ public class Scanner2Activity extends AppCompatActivity implements ZXingScannerV
 
     @Override
     public void handleResult(Result result) {
-        String scanResult = result.getText();
+        scanResult = result.getText();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Scan Result");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
