@@ -13,7 +13,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
     }
     public void openScannerActivity(View view) {
-        Intent intent = new Intent(this, ScannerActivity.class);
+        Intent intent = new Intent(this, Scanner2Activity.class);
         startActivity(intent);
     }
     public void openFacebookActivity(View view) {
